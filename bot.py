@@ -56,6 +56,7 @@ DEFAULT_REPLY = """प्रिय सदस्य,
 Customer Support:
 @nagurry
 @fafa1209
+@pp336666
 """
 
 knowledge_base = {
@@ -87,14 +88,19 @@ support_keywords = [
 ]
 
 def load_groups():
-if os.path.exists(GROUP_FILE):
-with open(GROUP_FILE, "r") as f:
-return json.load(f)
-return []
+    if os.path.exists(GROUP_FILE):
+        with open(GROUP_FILE, "r") as f:
+            return json.load(f)
+    return []
 
 def save_group(group_id):
-groups = load_groups()
+    groups = load_groups()
 
+    if group_id not in groups:
+        groups.append(group_id)
+
+        with open(GROUP_FILE, "w") as f:
+            json.dump(groups, f)
 if group_id not in groups:  
     groups.append(group_id)  
 
@@ -102,9 +108,8 @@ if group_id not in groups:
         json.dump(groups, f)
 
 async def track_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-if update.effective_chat.type in ["group", "supergroup"]:  
-    save_group(update.effective_chat.id)
+    if update.effective_chat.type in ["group", "supergroup"]:
+        save_group(update.effective_chat.id)
 
 async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
