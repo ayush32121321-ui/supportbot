@@ -1,8 +1,16 @@
 from telegram import Update
-from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filters
-
+from telegram.ext import (
+    ApplicationBuilder,
+    MessageHandler,
+    ContextTypes,
+    CommandHandler,
+    filters,
+)
+import json
+import os
 TOKEN = "8878176103:AAEKkT1-Z2t7is1ZbGTvIlhrTBSpaPNCzn8"
-
+OWNER_ID = 6488037485
+GROUP_FILE = "groups.json"
 SELL_MESSAGE = """🚀 Want Your Sell to Be Faster?
 
 ✅ Create multiple UPI IDs.
@@ -73,7 +81,26 @@ support_keywords = [
     "admin",
     "please help me",
 ]
+def load_groups():
+    if os.path.exists(GROUP_FILE):
+        with open(GROUP_FILE, "r") as f:
+            return json.load(f)
+    return []
 
+
+def save_group(group_id):
+    groups = load_groups()
+
+    if group_id not in groups:
+        groups.append(group_id)
+
+        with open(GROUP_FILE, "w") as f:
+            json.dump(groups, f)
+
+
+async def track_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_chat.type in ["group", "supergroup"]:
+        save_group(update.effective_chat.id)
 async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
@@ -89,7 +116,46 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if keyword in message:
             await update.message.reply_text(DEFAULT_REPLY)
             return
+async def announce(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    if update.effective_user.id != OWNER_ID:
+        await update.message.reply_text("❌ Permission denied")
+        return
+
+    text = " ".join(context.args)
+
+    if not text:
+        await update.message.reply_text(
+            "Use:\n/announce Your message"
+        )
+        return
+
+    groups = load_groups()
+
+    sent = 0
+
+    for group_id in groups:
+        try:
+            await context.bot.send_message(
+                chat_id=group_id,
+                text=f"📢 Announcement\n\n{text}"
+            )
+            sent += 1
+
+        except Exception:
+            pass
+
+    await update.message.reply_text(
+        f"✅ Announcement sent to {sent} groups"
+        )
+    app.add_handler(CommandHandler("announce", announce))
+
+app.add_handler(
+    MessageHandler(
+        filters.ChatType.GROUPS,
+        track_group
+    )
+)
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply))
 
