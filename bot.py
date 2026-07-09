@@ -1,21 +1,10 @@
 from telegram import Update
-from telegram.ext import (
-    ApplicationBuilder,
-    MessageHandler,
-    ContextTypes,
-    CommandHandler,
-    filters,
-)
-import json
-import os
+from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filters
 
-TOKEN = "8878176103:AAEKkT1-Z2t7is1ZbGTvIlhrTBSpaPNCzn8"
-
-OWNER_ID = 6488037485
-GROUP_FILE = "groups.json"
+TOKEN = "PASTE_YOUR_BOT_TOKEN_HERE"
 
 SELL_MESSAGE = """🚀 Want Your Sell to Be Faster?
-TEST123
+
 ✅ Create multiple UPI IDs.
 ✅ Add multiple wallets and bank accounts.
 ✅ Switch your primary UPI ID and primary bank account regularly.
@@ -85,22 +74,6 @@ support_keywords = [
     "please help me",
 ]
 
-def load_groups():
-    if os.path.exists(GROUP_FILE):
-        with open(GROUP_FILE, "r") as f:
-            return json.load(f)
-    return []
-
-def save_group(group_id):
-    groups = load_groups()
-    if group_id not in groups:
-        groups.append(group_id)
-        with open(GROUP_FILE, "w") as f:
-            json.dump(groups, f)async def track_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type in ["group", "supergroup"]:
-        save_group(update.effective_chat.id)
-
-
 async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
@@ -117,69 +90,9 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text(DEFAULT_REPLY)
             return
 
-
-async def announce(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    if update.effective_user.id != OWNER_ID:
-        await update.message.reply_text("❌ Permission denied")
-        return
-
-    message = " ".join(context.args)
-
-    if not message:
-        await update.message.reply_text(
-            "Use: /announce Your message"
-        )
-        return
-
-    groups = load_groups()
-
-    sent = 0
-
-    for group_id in groups:
-        try:
-            await context.bot.send_message(
-                chat_id=group_id,
-                text=f"📢 Announcement\n\n{message}"
-            )
-            sent += 1
-
-        except Exception:
-            pass
-
-
-    await update.message.reply_text(
-        f"✅ Announcement sent to {sent} groups"
-    )
-
-
 app = ApplicationBuilder().token(TOKEN).build()
-
-
-app.add_handler(
-    CommandHandler(
-        "announce",
-        announce
-    )
-)
-
-
-app.add_handler(
-    MessageHandler(
-        filters.StatusUpdate.NEW_CHAT_MEMBERS,
-        track_group
-    )
-)
-
-
-app.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        auto_reply
-    )
-)
-
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply))
 
 print("Support Bot Running...")
-
 app.run_polling()
+        
