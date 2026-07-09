@@ -42,8 +42,8 @@ DEFAULT_REPLY = """प्रिय सदस्य,
 कृपया अपनी समस्या का स्क्रीनशॉट और अपना ID साथ में भेजें ताकि हम आपकी जल्द सहायता कर सकें।
 
 Customer Support:
-@PPmoney66
 @Goodfortune1
+@nagurry
 @fafa1209
 """
 
@@ -91,25 +91,7 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
 
 app = ApplicationBuilder().token(TOKEN).build()
-app.add_handler(
-    CommandHandler(
-        "announce",
-        announce
-    )
-)
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply))
 
-app.add_handler(
-    MessageHandler(
-        filters.StatusUpdate.NEW_CHAT_MEMBERS,
-        track_group
-    )
-)
-
-app.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        auto_reply
-    )
-)
 print("Support Bot Running...")
 app.run_polling()
