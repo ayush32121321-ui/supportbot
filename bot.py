@@ -154,27 +154,25 @@ app = ApplicationBuilder().token(TOKEN).build()
 
 
 app.add_handler(
-    MessageHandler(
-        filters.ALL,
-        track_group
-    )
-)
-
-
-app.add_handler(
     CommandHandler(
         "announce",
         announce
     )
 )
 
+app.add_handler(
+    MessageHandler(
+        filters.StatusUpdate.NEW_CHAT_MEMBERS,
+        track_group
+    )
+)
 
 app.add_handler(
     MessageHandler(
         filters.TEXT & ~filters.COMMAND,
         auto_reply
     )
-)
+        )
 
 
 print("Support Bot Running...")
