@@ -15,7 +15,7 @@ OWNER_ID = 6488037485
 GROUP_FILE = "groups.json"
 
 SELL_MESSAGE = """🚀 Want Your Sell to Be Faster?
-
+TEST123
 ✅ Create multiple UPI IDs.
 ✅ Add multiple wallets and bank accounts.
 ✅ Switch your primary UPI ID and primary bank account regularly.
