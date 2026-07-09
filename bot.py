@@ -112,21 +112,22 @@ async def track_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
         save_group(update.effective_chat.id)
 
 async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-if not update.message or not update.message.text:  
-    return  
-
-text = update.message.text.lower()  
-
-for keyword, reply in knowledge_base.items():  
-    if keyword in text:  
-        await update.message.reply_text(reply)  
-        return  
-
-for keyword in support_keywords:  
-    if keyword in text:  
-        await update.message.reply_text(DEFAULT_REPLY)  
+    if not update.message or not update.message.text:
         return
+
+    text = update.message.text.lower()
+
+    for keyword, reply in knowledge_base.items():
+        if keyword in text:
+            await update.message.reply_text(reply)
+            return
+
+    for keyword in support_keywords:
+        if keyword in text:
+            await update.message.reply_text(DEFAULT_REPLY)
+            return
 
 async def announce(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
