@@ -57,9 +57,17 @@ async def track_group(update:Update,context:ContextTypes.DEFAULT_TYPE):
     if update.effective_chat and update.effective_chat.type in ("group","supergroup"):
         save_group(update.effective_chat.id)
 
+
+async def get_video_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message and update.message.video:
+        await update.message.reply_text(update.message.video.file_id)
+
+
 async def auto_reply(update:Update,context:ContextTypes.DEFAULT_TYPE):
-    if not update.message or not update.message.text: return
-    m=update.message.text.lower()
+    if not update.message or not update.message.text:
+        return
+
+    m = update.message.text.lower()
 
     if m=="sell":
         await update.message.reply_text(SELL_MESSAGE)
@@ -94,7 +102,10 @@ async def announce(update:Update,context:ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(f"Sent to {c} groups")
 
 app=ApplicationBuilder().token(TOKEN).build()
-app.add_handler(CommandHandler("announce",announce))
-app.add_handler(MessageHandler(filters.ALL,track_group),group=0)
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND,auto_reply),group=1)
+app.add_handler(CommandHandler("announce", announce))
+app.add_handler(MessageHandler(filters.ALL, track_group), group=0)
+
+app.add_handler(MessageHandler(filters.VIDEO, get_video_id), group=1)
+
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply), group=1)
 app.run_polling()
