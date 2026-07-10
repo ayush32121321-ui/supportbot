@@ -5,7 +5,8 @@ from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, Con
 TOKEN="8878176103:AAEKkT1-Z2t7is1ZbGTvIlhrTBSpaPNCzn8"
 OWNER_ID=6488037485
 GROUP_FILE="groups.json"
-
+WAITING_PHOTO = False
+WAITING_VIDEO = False
 SELL_VIDEO_ID="BAACAgUAAxkBAAPnalDB_HSeKrJsTS_Ymw47qEUOHKUAAtgdAAKSW4FWdedJ_-lG9D08BA"
 AUDIT_VIDEO_ID="BAACAgUAAxkBAAPralDCa0yXxb5lYferYVvWnuwNJMsAAt0dAAKSW4FWsAF9ASSoxLc8BA"
 FREEZE_VIDEO_ID="BAACAgUAAxkBAAPpalDCVY-zITe6MdYiwd1yUxKDQRgAAtwdAAKSW4FWEqvRTLMfAAGXPAQ"
@@ -172,10 +173,72 @@ async def announce(update:Update,context:ContextTypes.DEFAULT_TYPE):
             c+=1
         except: pass
     await update.message.reply_text(f"Sent to {c} groups")
+async def announcephoto(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    global WAITING_PHOTO
+    if update.effective_user.id != OWNER_ID:
+        return
+    WAITING_PHOTO = True
+    await update.message.reply_text("📸 Please send the photo with a caption.")
 
+async def announcevideo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    global WAITING_VIDEO
+    if update.effective_user.id != OWNER_ID:
+        return
+    WAITING_VIDEO = True
+    await update.message.reply_text("🎥 Please send the video with a caption.")
+    async def announcement_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    global WAITING_PHOTO, WAITING_VIDEO
+
+    if update.effective_user.id != OWNER_ID:
+        return
+
+    if WAITING_PHOTO and update.message.photo:
+        caption = update.message.caption or ""
+        photo = update.message.photo[-1].file_id
+
+        count = 0
+        for gid in load_groups():
+            try:
+                await context.bot.send_photo(
+                    chat_id=gid,
+                    photo=photo,
+                    caption=caption
+                )
+                count += 1
+            except:
+                pass
+
+        WAITING_PHOTO = False
+        await update.message.reply_text(f"✅ Photo sent to {count} groups.")
+        return
+
+    if WAITING_VIDEO and update.message.video:
+        caption = update.message.caption or ""
+        video = update.message.video.file_id
+
+        count = 0
+        for gid in load_groups():
+            try:
+                await context.bot.send_video(
+                    chat_id=gid,
+                    video=video,
+                    caption=caption
+                )
+                count += 1
+            except:
+                pass
+
+        WAITING_VIDEO = False
+        await update.message.reply_text(f"✅ Video sent to {count} groups.")
 app=ApplicationBuilder().token(TOKEN).build()
+
 app.add_handler(CommandHandler("announce", announce))
+app.add_handler(CommandHandler("announcephoto", announcephoto))
+app.add_handler(CommandHandler("announcevideo", announcevideo))
+
 app.add_handler(MessageHandler(filters.ALL, track_group), group=0)
+
+app.add_handler(MessageHandler(filters.PHOTO | filters.VIDEO, announcement_media), group=1)
 
 app.add_handler(MessageHandler(filters.VIDEO, get_video_id), group=1)
 
