@@ -47,7 +47,36 @@ Customer Support:
 @nagurry
 @fafa1209
 """
+TASK_REWARD = """🎁 Task Reward Request Received
 
+Please wait.
+
+Agar aapne required task successfully complete kiya hai, to Customer Support verification ke baad reward process kar diya jayega.
+
+Normally reward next day process hota hai.
+"""
+
+TEAM_REWARD = """🎁 Team Volume Reward Request Received
+
+Please wait.
+
+Aapka team volume verify hone ke baad Customer Support reward process karegi.
+"""
+
+NEWUSER_REWARD = """🎁 New User Reward Request Received
+
+Please wait.
+
+Agar aapka invited user valid hai, to verification ke baad reward add kar diya jayega.
+"""
+
+DONE_MESSAGE = """🎉 Congratulations!
+
+Your reward has been successfully verified and credited.
+
+Thank you for your support.
+Keep growing and keep earning! 💙
+"""
 support_keywords=["help me","support me","admin","please help me"]
 
 def load_groups():
@@ -71,13 +100,31 @@ async def get_video_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(update.message.video.file_id)
 
 
-async def auto_reply(update:Update,context:ContextTypes.DEFAULT_TYPE):
+async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
 
     m = update.message.text.lower()
 
-    if m=="sell":
+    import re
+
+    uid = re.search(r"\b\d{6,12}\b", m)
+
+    if uid:
+        if "#1" in m:
+            await update.message.reply_text(TASK_REWARD)
+            return
+
+        if "#2" in m:
+            await update.message.reply_text(TEAM_REWARD)
+            return
+
+        if "#5" in m:
+            await update.message.reply_text(NEWUSER_REWARD)
+            return
+
+    if m == "sell":
+        ...
         await update.message.reply_text(SELL_MESSAGE)
         await update.message.reply_video(SELL_VIDEO_ID)
         return
