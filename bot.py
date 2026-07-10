@@ -6,9 +6,9 @@ TOKEN="8878176103:AAEKkT1-Z2t7is1ZbGTvIlhrTBSpaPNCzn8"
 OWNER_ID=6488037485
 GROUP_FILE="groups.json"
 
-SELL_VIDEO_ID="BAACAgUAAxkBAAFOtoVqUJ_17TK2zPPYSu9164_8OQ-sUgAC2B0AApJbgVY7SkcS_qv4FTwE"
-AUDIT_VIDEO_ID="BAACAgUAAxkBAAFOtqpqUKIdn2Y_GRC1ZdYcxmB7mECqWwAC3R0AApJbgVZKjoE_8TR5WzwE"
-FREEZE_VIDEO_ID="BAACAgUAAxkBAAFOtqFqUKEyVnqSQiTHuvr-9dBLg-s_jAAC3B0AApJbgVbNztD3lm0ZCDwE"
+SELL_VIDEO_ID="BAACAgUAAxkBAAPnalDB_HSeKrJsTS_Ymw47qEUOHKUAAtgdAAKSW4FWdedJ_-lG9D08BA"
+AUDIT_VIDEO_ID="BAACAgUAAxkBAAPralDCa0yXxb5lYferYVvWnuwNJMsAAt0dAAKSW4FWsAF9ASSoxLc8BA"
+FREEZE_VIDEO_ID="BAACAgUAAxkBAAPpalDCVY-zITe6MdYiwd1yUxKDQRgAAtwdAAKSW4FWEqvRTLMfAAGXPAQ"
 
 SELL_MESSAGE= """🚀 Want Your Sell to Be Faster?
 
@@ -38,7 +38,15 @@ FREEZE_MESSAGE="""If you unlink your UPI account while withdrawing funds, the fu
 
 The system flagged his behavior as fraudulent because you cut the UPI connection while the transaction was in progress; otherwise, why would you disable UPI during normal operations?
 """
-DEFAULT_REPLY="Customer Support:\n@Goodfortune1\n@nagurry\n@fafa1209"
+DEFAULT_REPLY="""प्रिय सदस्य,
+
+कृपया अपनी समस्या का स्क्रीनशॉट और अपना ID साथ में भेजें ताकि हम आपकी जल्द सहायता कर सकें।
+
+Customer Support:
+@Goodfortune1
+@nagurry
+@fafa1209
+"""
 
 support_keywords=["help me","support me","admin","please help me"]
 
