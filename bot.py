@@ -160,33 +160,49 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if any(x in m for x in support_keywords):
         await update.message.reply_text(DEFAULT_REPLY)
 
-async def announce(update:Update,context:ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id!=OWNER_ID:
-        await update.message.reply_text("Permission denied"); return
-    msg=" ".join(context.args)
+async def announce(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != OWNER_ID:
+        await update.message.reply_text("Permission denied")
+        return
+
+    msg = " ".join(context.args)
+
     if not msg:
-        await update.message.reply_text("Usage: /announce your message"); return
-    c=0
+        await update.message.reply_text("Usage: /announce your message")
+        return
+
+    c = 0
     for gid in load_groups():
         try:
-            await context.bot.send_message(gid,f"📢 Announcement\n\n{msg}")
-            c+=1
-        except: pass
+            await context.bot.send_message(gid, f"📢 Announcement\n\n{msg}")
+            c += 1
+        except:
+            pass
+
     await update.message.reply_text(f"Sent to {c} groups")
+
+
 async def announcephoto(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global WAITING_PHOTO
+
     if update.effective_user.id != OWNER_ID:
         return
+
     WAITING_PHOTO = True
     await update.message.reply_text("📸 Please send the photo with a caption.")
 
+
 async def announcevideo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global WAITING_VIDEO
+
     if update.effective_user.id != OWNER_ID:
         return
+
     WAITING_VIDEO = True
     await update.message.reply_text("🎥 Please send the video with a caption.")
-    async def announcement_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+
+async def announcement_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global WAITING_PHOTO, WAITING_VIDEO
 
     if update.effective_user.id != OWNER_ID:
@@ -230,6 +246,7 @@ async def announcevideo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         WAITING_VIDEO = False
         await update.message.reply_text(f"✅ Video sent to {count} groups.")
+        return
 app=ApplicationBuilder().token(TOKEN).build()
 
 app.add_handler(CommandHandler("announce", announce))
