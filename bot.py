@@ -95,6 +95,18 @@ async def track_group(update:Update,context:ContextTypes.DEFAULT_TYPE):
         save_group(update.effective_chat.id)
 
 
+async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id == OWNER_ID:
+        return True
+
+    member = await context.bot.get_chat_member(
+        update.effective_chat.id,
+        update.effective_user.id
+    )
+
+    return member.status in ["administrator", "creator"]
+
+
 async def get_video_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message and update.message.video:
         await update.message.reply_text(update.message.video.file_id)
@@ -110,18 +122,23 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     uid = re.search(r"\b\d{6,12}\b", m)
 
-    if uid:
-        if "#1" in m:
-            await update.message.reply_text(TASK_REWARD)
-            return
+if uid:
+    if "done" in m:
+        if await is_admin(update, context):
+            await update.message.reply_text(DONE_MESSAGE)
+        return
 
-        if "#2" in m:
-            await update.message.reply_text(TEAM_REWARD)
-            return
+    if "#1" in m:
+        await update.message.reply_text(TASK_REWARD)
+        return
 
-        if "#5" in m:
-            await update.message.reply_text(NEWUSER_REWARD)
-            return
+    if "#2" in m:
+        await update.message.reply_text(TEAM_REWARD)
+        return
+
+    if "#5" in m:
+        await update.message.reply_text(NEWUSER_REWARD)
+        return
 
     if m == "sell":
         ...
