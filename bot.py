@@ -170,14 +170,20 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     import re
 
-    uid = re.search(r"\b\d{6,12}\b", m)
+        uid = re.search(r"\b\d{6,12}\b", m)
 
-# ================= REWARD SYSTEM =================
-if uid and ("#1" in m or "#2" in m or "#5" in m or "done" in m):
-    rewards = load_rewards()
-    uid_text = uid.group()
+    # ================= REWARD SYSTEM =================
+    if uid and ("#1" in m or "#2" in m or "#5" in m or "done" in m):
+        rewards = load_rewards()
+        uid_text = uid.group()
 
-    if "done" in m:
+        if "done" in m:
+            if await is_admin(update, context):
+                await update.message.reply_text(DONE_MESSAGE)
+            return
+
+        if "#1" in m:
+            ...
         if await is_admin(update, context):
             await update.message.reply_text(DONE_MESSAGE)
         return
