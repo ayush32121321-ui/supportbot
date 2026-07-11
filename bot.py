@@ -230,6 +230,84 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text(TEAM_REWARD)
             return
 
+async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message or not update.message.text:
+        return
+
+    m = update.message.text.lower()
+
+    import re
+
+    uid = re.search(r"\b\d{6,12}\b", m)
+
+    # UID Support Start
+    if uid and update.effective_user.id not in WAITING_SUPPORT:
+        USER_UID[update.effective_user.id] = uid.group()
+        WAITING_SUPPORT[update.effective_user.id] = True
+
+        await update.message.reply_text(
+            "💙 Bhai, hume aapka UID mil gaya hai.\n\n"
+            "Kripya apni problem ka screenshot aur thoda sa problem bhi bata dijiye.\n\n"
+            "❤️ Tension mat lo bhai, hum aapki help ke liye hain."
+        )
+        return
+
+    # Problem Receive
+    if update.effective_user.id in WAITING_SUPPORT:
+        USER_PROBLEM[update.effective_user.id] = update.message.text
+
+        ticket = create_ticket()
+
+        await update.message.reply_text(
+            f"💙 Bhai, humne aapki problem receive kar li hai.\n\n"
+            f"🎫 Ticket Number: #{ticket}\n\n"
+            "Hume pata hai problem hone par tension hoti hai.\n"
+            "Bas patience rakho bhai, aap hamare bhai ho.\n"
+            "Aapki problem solve karne ki poori koshish ki jayegi."
+        )
+
+        WAITING_SUPPORT.pop(update.effective_user.id, None)
+        return
+
+
+    if uid:
+        rewards = load_rewards()
+        uid = uid.group()
+
+        if "done" in m:
+            if await is_admin(update, context):
+                await update.message.reply_text(DONE_MESSAGE)
+            return
+
+
+        if "#1" in m:
+            key = f"{uid}_task"
+
+            if key in rewards:
+                await update.message.reply_text(ALREADY_PENDING)
+                return
+
+            rewards[key] = True
+            save_rewards(rewards)
+
+            await update.message.reply_text(TASK_REWARD)
+            return
+
+
+        if "#2" in m:
+            key = f"{uid}_team"
+
+            if key in rewards:
+                await update.message.reply_text(ALREADY_PENDING)
+                return
+
+            rewards[key] = True
+            save_rewards(rewards)
+
+            await update.message.reply_text(TEAM_REWARD)
+            return
+
+
         if "#5" in m:
             key = f"{uid}_newuser"
 
