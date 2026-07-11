@@ -356,6 +356,8 @@ async def announcement_media(update: Update, context: ContextTypes.DEFAULT_TYPE)
         WAITING_VIDEO = False
         await update.message.reply_text(f"✅ Video sent to {count} groups.")
         return
+        async def groupid(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(str(update.effective_chat.id))
 app=ApplicationBuilder().token(TOKEN).build()
 
 app.add_handler(CommandHandler("announce", announce))
@@ -369,4 +371,5 @@ app.add_handler(MessageHandler(filters.PHOTO | filters.VIDEO, announcement_media
 app.add_handler(MessageHandler(filters.VIDEO, get_video_id), group=1)
 
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply), group=1)
+app.add_handler(CommandHandler("groupid", groupid))
 app.run_polling()
