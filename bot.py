@@ -171,7 +171,46 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     import re
 
     uid = re.search(r"\b\d{6,12}\b", m)
+# ================= REWARD SYSTEM =================
 
+if uid and ("#1" in m or "#2" in m or "#5" in m or "done" in m):
+    rewards = load_rewards()
+    uid = uid.group()
+
+    if "done" in m:
+        if await is_admin(update, context):
+            await update.message.reply_text(DONE_MESSAGE)
+        return
+
+    if "#1" in m:
+        key = f"{uid}_task"
+        if key in rewards:
+            await update.message.reply_text(ALREADY_PENDING)
+            return
+        rewards[key] = True
+        save_rewards(rewards)
+        await update.message.reply_text(TASK_REWARD)
+        return
+
+    if "#2" in m:
+        key = f"{uid}_team"
+        if key in rewards:
+            await update.message.reply_text(ALREADY_PENDING)
+            return
+        rewards[key] = True
+        save_rewards(rewards)
+        await update.message.reply_text(TEAM_REWARD)
+        return
+
+    if "#5" in m:
+        key = f"{uid}_newuser"
+        if key in rewards:
+            await update.message.reply_text(ALREADY_PENDING)
+            return
+        rewards[key] = True
+        save_rewards(rewards)
+        await update.message.reply_text(NEWUSER_REWARD)
+        return
     # UID Support Start
     if uid and update.effective_user.id not in WAITING_SUPPORT:
         USER_UID[update.effective_user.id] = uid.group()
