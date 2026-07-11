@@ -101,21 +101,26 @@ def load_rewards():
 def save_rewards(data):
     with open(REWARD_FILE, "w") as f:
         json.dump(data, f)
-        def load_support():
+
+
+def load_support():
     if os.path.exists(SUPPORT_FILE):
         with open(SUPPORT_FILE, "r") as f:
             return json.load(f)
     return {}
 
+
 def save_support(data):
     with open(SUPPORT_FILE, "w") as f:
         json.dump(data, f)
+
+
 def save_group(gid):
-    g=load_groups()
+    g = load_groups()
     if gid not in g:
         g.append(gid)
-        with open(GROUP_FILE,"w") as f: json.dump(g,f)
-
+        with open(GROUP_FILE, "w") as f:
+            json.dump(g, f)
 async def track_group(update:Update,context:ContextTypes.DEFAULT_TYPE):
     if update.effective_chat and update.effective_chat.type in ("group","supergroup"):
         save_group(update.effective_chat.id)
