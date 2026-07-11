@@ -6,7 +6,7 @@ TOKEN="8878176103:AAEKkT1-Z2t7is1ZbGTvIlhrTBSpaPNCzn8"
 OWNER_ID=6488037485
 GROUP_FILE="groups.json"
 REWARD_FILE = "reward_history.json"
-
+SUPPORT_FILE = "support.json"
 ALREADY_PENDING = """⏳ Already Pending
 
 Your reward request has already been submitted.
@@ -100,6 +100,15 @@ def load_rewards():
 
 def save_rewards(data):
     with open(REWARD_FILE, "w") as f:
+        json.dump(data, f)
+        def load_support():
+    if os.path.exists(SUPPORT_FILE):
+        with open(SUPPORT_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_support(data):
+    with open(SUPPORT_FILE, "w") as f:
         json.dump(data, f)
 def save_group(gid):
     g=load_groups()
