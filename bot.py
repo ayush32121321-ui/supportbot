@@ -154,6 +154,17 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     import re
 
     uid = re.search(r"\b\d{6,12}\b", m)
+        if uid:    
+        USER_UID[update.effective_user.id] = uid.group()
+        WAITING_SUPPORT[update.effective_user.id] = True
+
+        await update.message.reply_text(
+            "💙 Bhai, hume aapka UID mil gaya hai.\n\n"
+            "Kripya apni problem ka screenshot aur thoda sa problem bhi bata dijiye, "
+            "taaki hamari support team aapki jaldi madad kar sake.\n\n"
+            "❤️ Aap tension mat lijiye, hum poori koshish karenge ki aapki problem jaldi solve ho."
+        )
+        return
     if uid:
         rewards = load_rewards()
         uid = uid.group()
