@@ -141,9 +141,11 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if uid:
     rewards = load_rewards()
+    if uid:
+    rewards = load_rewards()
     uid = uid.group()
 
-    if "done" in m:
+    if "done" in m and uid:
         if await is_admin(update, context):
             await update.message.reply_text(DONE_MESSAGE)
         return
