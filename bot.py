@@ -170,7 +170,7 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     import re
 
-        uid = re.search(r"\b\d{6,12}\b", m)
+    uid = re.search(r"\b\d{6,12}\b", m)
 
     # ================= REWARD SYSTEM =================
     if uid and ("#1" in m or "#2" in m or "#5" in m or "done" in m):
