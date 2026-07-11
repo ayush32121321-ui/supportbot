@@ -8,6 +8,7 @@ GROUP_FILE="groups.json"
 REWARD_FILE = "reward_history.json"
 SUPPORT_FILE = "support.json"
 TICKET_FILE = "ticket.json"
+SUPPORT_GROUP_ID = -1003992031604
 ALREADY_PENDING = """⏳ Already Pending
 
 Your reward request has already been submitted.
