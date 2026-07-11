@@ -118,6 +118,21 @@ def save_support(data):
         json.dump(data, f)
 
 
+def create_ticket():
+    if os.path.exists(TICKET_FILE):
+        with open(TICKET_FILE, "r") as f:
+            data = json.load(f)
+    else:
+        data = {"last_ticket": 1000}
+
+    data["last_ticket"] += 1
+
+    with open(TICKET_FILE, "w") as f:
+        json.dump(data, f)
+
+    return data["last_ticket"]
+
+
 def save_group(gid):
     g = load_groups()
     if gid not in g:
