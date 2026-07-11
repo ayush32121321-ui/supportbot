@@ -246,57 +246,6 @@ if update.effective_user.id in WAITING_SUPPORT:
 
     WAITING_SUPPORT.pop(update.effective_user.id, None)
     return
-
-    if uid:
-        rewards = load_rewards()
-        uid = uid.group()
-
-        if "done" in m:
-            if await is_admin(update, context):
-                await update.message.reply_text(DONE_MESSAGE)
-            return
-
-
-        if "#1" in m:
-            key = f"{uid}_task"
-
-            if key in rewards:
-                await update.message.reply_text(ALREADY_PENDING)
-                return
-
-            rewards[key] = True
-            save_rewards(rewards)
-
-            await update.message.reply_text(TASK_REWARD)
-            return
-
-
-        if "#2" in m:
-            key = f"{uid}_team"
-
-            if key in rewards:
-                await update.message.reply_text(ALREADY_PENDING)
-                return
-
-            rewards[key] = True
-            save_rewards(rewards)
-
-            await update.message.reply_text(TEAM_REWARD)
-            return
-
-
-        if "#5" in m:
-            key = f"{uid}_newuser"
-
-            if key in rewards:
-                await update.message.reply_text(ALREADY_PENDING)
-                return
-
-            rewards[key] = True
-            save_rewards(rewards)
-
-            await update.message.reply_text(NEWUSER_REWARD)
-            return
     if m == "sell":
         ...
         await update.message.reply_text(SELL_MESSAGE)
