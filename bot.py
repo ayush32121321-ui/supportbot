@@ -197,7 +197,15 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Bas patience rakho bhai, aap hamare bhai ho.\n"
             "Aapki problem solve karne ki poori koshish ki jayegi."
         )
-
+await context.bot.send_message(
+    chat_id=SUPPORT_GROUP_ID,
+    text=(
+        f"🎫 New Support Ticket #{ticket}\n\n"
+        f"👤 User: {update.effective_user.full_name}\n"
+        f"🆔 UID: {USER_UID.get(update.effective_user.id, 'N/A')}\n"
+        f"📝 Problem:\n{USER_PROBLEM[update.effective_user.id]}"
+    )
+)
         WAITING_SUPPORT.pop(update.effective_user.id, None)
         return
 
