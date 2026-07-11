@@ -7,6 +7,7 @@ OWNER_ID=6488037485
 GROUP_FILE="groups.json"
 REWARD_FILE = "reward_history.json"
 SUPPORT_FILE = "support.json"
+TICKET_FILE = "ticket.json"
 ALREADY_PENDING = """⏳ Already Pending
 
 Your reward request has already been submitted.
