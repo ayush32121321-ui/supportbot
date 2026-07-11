@@ -353,12 +353,16 @@ async def announcement_media(update: Update, context: ContextTypes.DEFAULT_TYPE)
             except:
                 pass
 
-        WAITING_VIDEO = False
+                WAITING_VIDEO = False
         await update.message.reply_text(f"✅ Video sent to {count} groups.")
         return
-        async def groupid(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+
+async def groupid(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(str(update.effective_chat.id))
-app=ApplicationBuilder().token(TOKEN).build()
+
+
+app = ApplicationBuilder().token(TOKEN).build()
 
 app.add_handler(CommandHandler("announce", announce))
 app.add_handler(CommandHandler("announcephoto", announcephoto))
