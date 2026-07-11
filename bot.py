@@ -174,6 +174,7 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # ================= REWARD SYSTEM =================
     if uid and ("#1" in m or "#2" in m or "#5" in m or "done" in m):
+
         rewards = load_rewards()
         uid_text = uid.group()
 
@@ -183,75 +184,84 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
 
         if "#1" in m:
-            ...
-        if await is_admin(update, context):
-            await update.message.reply_text(DONE_MESSAGE)
-        return
+            key = f"{uid_text}_task"
 
-    if "#1" in m:
-        key = f"{uid_text}_task"
-        if key in rewards:
-            await update.message.reply_text(ALREADY_PENDING)
+            if key in rewards:
+                await update.message.reply_text(ALREADY_PENDING)
+                return
+
+            rewards[key] = True
+            save_rewards(rewards)
+
+            await update.message.reply_text(TASK_REWARD)
             return
-        rewards[key] = True
-        save_rewards(rewards)
-        await update.message.reply_text(TASK_REWARD)
-        return
 
-    if "#2" in m:
-        key = f"{uid_text}_team"
-        if key in rewards:
-            await update.message.reply_text(ALREADY_PENDING)
+        if "#2" in m:
+            key = f"{uid_text}_team"
+
+            if key in rewards:
+                await update.message.reply_text(ALREADY_PENDING)
+                return
+
+            rewards[key] = True
+            save_rewards(rewards)
+
+            await update.message.reply_text(TEAM_REWARD)
             return
-        rewards[key] = True
-        save_rewards(rewards)
-        await update.message.reply_text(TEAM_REWARD)
-        return
 
-    if "#5" in m:
-        key = f"{uid_text}_newuser"
-        if key in rewards:
-            await update.message.reply_text(ALREADY_PENDING)
+        if "#5" in m:
+            key = f"{uid_text}_newuser"
+
+            if key in rewards:
+                await update.message.reply_text(ALREADY_PENDING)
+                return
+
+            rewards[key] = True
+            save_rewards(rewards)
+
+            await update.message.reply_text(NEWUSER_REWARD)
             return
-        rewards[key] = True
-        save_rewards(rewards)
-        await update.message.reply_text(NEWUSER_REWARD)
-        return
 
-# ================= SUPPORT SYSTEM =================
-if uid and update.effective_user.id not in WAITING_SUPPORT:
-    USER_UID[update.effective_user.id] = uid.group()
-    WAITING_SUPPORT[update.effective_user.id] = True
 
-    await update.message.reply_text(
-        "💙 Bhai, hume aapka UID mil gaya hai.\n\n"
-        "Kripya apni problem ka screenshot aur thoda sa problem bhi bata dijiye."
-    )
-    return
+    # ================= SUPPORT SYSTEM =================
 
-if update.effective_user.id in WAITING_SUPPORT:
-    USER_PROBLEM[update.effective_user.id] = update.message.text
+    if uid:
+        USER_UID[update.effective_user.id] = uid.group()
+        WAITING_SUPPORT[update.effective_user.id] = True
 
-    ticket = create_ticket()
-
-    await update.message.reply_text(
-        f"💙 Bhai, humne aapki problem receive kar li hai.\n\n"
-        f"🎫 Ticket Number: #{ticket}\n\n"
-        "Bas patience rakho bhai, aap hamare bhai ho."
-    )
-
-    await context.bot.send_message(
-        chat_id=SUPPORT_GROUP_ID,
-        text=(
-            f"🎫 New Support Ticket #{ticket}\n\n"
-            f"👤 User: {update.effective_user.full_name}\n"
-            f"🆔 UID: {USER_UID.get(update.effective_user.id,'N/A')}\n"
-            f"📝 Problem:\n{USER_PROBLEM[update.effective_user.id]}"
+        await update.message.reply_text(
+            "💙 Bhai, hume aapka UID mil gaya hai.\n\n"
+            "Kripya apni problem ka screenshot aur thoda sa problem bhi bata dijiye."
         )
-    )
+        return
 
-    WAITING_SUPPORT.pop(update.effective_user.id, None)
-    return
+
+    if update.effective_user.id in WAITING_SUPPORT:
+
+        USER_PROBLEM[update.effective_user.id] = update.message.text
+
+        ticket = create_ticket()
+
+        await update.message.reply_text(
+            f"💙 Bhai, humne aapki problem receive kar li hai.\n\n"
+            f"🎫 Ticket Number: #{ticket}\n\n"
+            "Bas patience rakho bhai, aap hamare bhai ho."
+        )
+
+        await context.bot.send_message(
+            chat_id=SUPPORT_GROUP_ID,
+            text=(
+                f"🎫 New Support Ticket #{ticket}\n\n"
+                f"👤 User: {update.effective_user.full_name}\n"
+                f"🆔 UID: {USER_UID.get(update.effective_user.id,'N/A')}\n"
+                f"📝 Problem:\n{USER_PROBLEM[update.effective_user.id]}"
+            )
+        )
+
+        WAITING_SUPPORT.pop(update.effective_user.id, None)
+        return
+
+
     if m == "sell":
         ...
         await update.message.reply_text(SELL_MESSAGE)
