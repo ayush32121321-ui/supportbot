@@ -18,6 +18,7 @@ WAITING_PHOTO = False
 WAITING_VIDEO = False
 USER_UID = {}
 WAITING_SUPPORT = {}
+USER_PROBLEM = {}
 SELL_VIDEO_ID="BAACAgUAAxkBAAPnalDB_HSeKrJsTS_Ymw47qEUOHKUAAtgdAAKSW4FWdedJ_-lG9D08BA"
 AUDIT_VIDEO_ID="BAACAgUAAxkBAAPralDCa0yXxb5lYferYVvWnuwNJMsAAt0dAAKSW4FWsAF9ASSoxLc8BA"
 FREEZE_VIDEO_ID="BAACAgUAAxkBAAPpalDCVY-zITe6MdYiwd1yUxKDQRgAAtwdAAKSW4FWEqvRTLMfAAGXPAQ"
@@ -179,6 +180,20 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "💙 Bhai, hume aapka UID mil gaya hai.\n\n"
             "Kripya apni problem ka screenshot aur thoda sa problem bhi bata dijiye."
         )
+        return
+            if update.effective_user.id in WAITING_SUPPORT:
+        USER_PROBLEM[update.effective_user.id] = update.message.text
+
+        ticket = create_ticket()
+
+        await update.message.reply_text(
+            f"💙 Bhai, humne aapki problem receive kar li hai.\n\n"
+            f"🎫 Ticket Number: #{ticket}\n\n"
+            "Bas thoda patience rakho, aap hamare bhai ho.\n"
+            "Aapki problem solve karne ki poori koshish ki jayegi."
+        )
+
+        WAITING_SUPPORT.pop(update.effective_user.id, None)
         return
     if uid:
         rewards = load_rewards()
