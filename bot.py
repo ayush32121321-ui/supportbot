@@ -140,9 +140,10 @@ def save_group(gid):
         g.append(gid)
         with open(GROUP_FILE, "w") as f:
             json.dump(g, f)
-async def track_group(update:Update,context:ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat and update.effective_chat.type in ("group","supergroup"):
+async def track_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_chat and update.effective_chat.type in ("group", "supergroup"):
         save_group(update.effective_chat.id)
+        print("GROUP ID:", update.effective_chat.id)
 
 
 async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
