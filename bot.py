@@ -146,7 +146,6 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if await is_admin(update, context):
         await update.message.reply_text(DONE_MESSAGE)
     return
-
     if "#1" in m:
         key = f"{uid}_task"
 
