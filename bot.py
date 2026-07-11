@@ -5,6 +5,14 @@ from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, Con
 TOKEN="8878176103:AAEKkT1-Z2t7is1ZbGTvIlhrTBSpaPNCzn8"
 OWNER_ID=6488037485
 GROUP_FILE="groups.json"
+REWARD_FILE = "reward_history.json"
+
+ALREADY_PENDING = """⏳ Already Pending
+
+Your reward request has already been submitted.
+
+Please wait for verification.
+"""
 WAITING_PHOTO = False
 WAITING_VIDEO = False
 SELL_VIDEO_ID="BAACAgUAAxkBAAPnalDB_HSeKrJsTS_Ymw47qEUOHKUAAtgdAAKSW4FWdedJ_-lG9D08BA"
@@ -84,7 +92,15 @@ def load_groups():
     if os.path.exists(GROUP_FILE):
         with open(GROUP_FILE,"r") as f: return json.load(f)
     return []
+def load_rewards():
+    if os.path.exists(REWARD_FILE):
+        with open(REWARD_FILE, "r") as f:
+            return json.load(f)
+    return {}
 
+def save_rewards(data):
+    with open(REWARD_FILE, "w") as f:
+        json.dump(data, f)
 def save_group(gid):
     g=load_groups()
     if gid not in g:
@@ -124,22 +140,51 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     uid = re.search(r"\b\d{6,12}\b", m)
 
     if uid:
+        rewards = load_rewards()
+uid = uid.group()
         if "done" in m:
             if await is_admin(update, context):
                 await update.message.reply_text(DONE_MESSAGE)
             return
 
         if "#1" in m:
-            await update.message.reply_text(TASK_REWARD)
-            return
+    key = f"{uid}_task"
+
+    if key in rewards:
+        await update.message.reply_text(ALREADY_PENDING)
+        return
+
+    rewards[key] = True
+    save_rewards(rewards)
+
+    await update.message.reply_text(TASK_REWARD)
+    return
 
         if "#2" in m:
-            await update.message.reply_text(TEAM_REWARD)
-            return
+    key = f"{uid}_team"
+
+    if key in rewards:
+        await update.message.reply_text(ALREADY_PENDING)
+        return
+
+    rewards[key] = True
+    save_rewards(rewards)
+
+    await update.message.reply_text(TEAM_REWARD)
+    return
 
         if "#5" in m:
-            await update.message.reply_text(NEWUSER_REWARD)
-            return
+    key = f"{uid}_newuser"
+
+    if key in rewards:
+        await update.message.reply_text(ALREADY_PENDING)
+        return
+
+    rewards[key] = True
+    save_rewards(rewards)
+
+    await update.message.reply_text(NEWUSER_REWARD)
+    return
 
     if m == "sell":
         ...
