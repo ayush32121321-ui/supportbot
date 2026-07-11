@@ -139,10 +139,9 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     uid = re.search(r"\b\d{6,12}\b", m)
 
-if uid:
-    rewards = load_rewards()
-    uid = uid.group()
-
+    if uid:
+        rewards = load_rewards()
+        uid = uid.group()
     if "done" in m:
         if await is_admin(update, context):
             await update.message.reply_text(DONE_MESSAGE)
