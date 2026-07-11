@@ -185,31 +185,31 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     # Problem Receive
-if update.effective_user.id in WAITING_SUPPORT:
-    USER_PROBLEM[update.effective_user.id] = update.message.text
+    if update.effective_user.id in WAITING_SUPPORT:
+        USER_PROBLEM[update.effective_user.id] = update.message.text
 
-    ticket = create_ticket()
+        ticket = create_ticket()
 
-    await update.message.reply_text(
-        f"💙 Bhai, humne aapki problem receive kar li hai.\n\n"
-        f"🎫 Ticket Number: #{ticket}\n\n"
-        "Hume pata hai problem hone par tension hoti hai.\n"
-        "Bas patience rakho bhai, aap hamare bhai ho.\n"
-        "Aapki problem solve karne ki poori koshish ki jayegi."
-    )
-
-    await context.bot.send_message(
-        chat_id=SUPPORT_GROUP_ID,
-        text=(
-            f"🎫 New Support Ticket #{ticket}\n\n"
-            f"👤 User: {update.effective_user.full_name}\n"
-            f"🆔 UID: {USER_UID.get(update.effective_user.id, 'N/A')}\n"
-            f"📝 Problem:\n{USER_PROBLEM[update.effective_user.id]}"
+        await update.message.reply_text(
+            f"💙 Bhai, humne aapki problem receive kar li hai.\n\n"
+            f"🎫 Ticket Number: #{ticket}\n\n"
+            "Hume pata hai problem hone par tension hoti hai.\n"
+            "Bas patience rakho bhai, aap hamare bhai ho.\n"
+            "Aapki problem solve karne ki poori koshish ki jayegi."
         )
-    )
 
-    WAITING_SUPPORT.pop(update.effective_user.id, None)
-    return
+        await context.bot.send_message(
+            chat_id=SUPPORT_GROUP_ID,
+            text=(
+                f"🎫 New Support Ticket #{ticket}\n\n"
+                f"👤 User: {update.effective_user.full_name}\n"
+                f"🆔 UID: {USER_UID.get(update.effective_user.id, 'N/A')}\n"
+                f"📝 Problem:\n{USER_PROBLEM[update.effective_user.id]}"
+            )
+        )
+
+        WAITING_SUPPORT.pop(update.effective_user.id, None)
+        return
 
     if uid:
         rewards = load_rewards()
