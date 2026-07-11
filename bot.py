@@ -171,11 +171,11 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     import re
 
     uid = re.search(r"\b\d{6,12}\b", m)
-# ================= REWARD SYSTEM =================
 
+# ================= REWARD SYSTEM =================
 if uid and ("#1" in m or "#2" in m or "#5" in m or "done" in m):
     rewards = load_rewards()
-    uid = uid.group()
+    uid_text = uid.group()
 
     if "done" in m:
         if await is_admin(update, context):
@@ -183,7 +183,7 @@ if uid and ("#1" in m or "#2" in m or "#5" in m or "done" in m):
         return
 
     if "#1" in m:
-        key = f"{uid}_task"
+        key = f"{uid_text}_task"
         if key in rewards:
             await update.message.reply_text(ALREADY_PENDING)
             return
@@ -193,7 +193,7 @@ if uid and ("#1" in m or "#2" in m or "#5" in m or "done" in m):
         return
 
     if "#2" in m:
-        key = f"{uid}_team"
+        key = f"{uid_text}_team"
         if key in rewards:
             await update.message.reply_text(ALREADY_PENDING)
             return
@@ -203,7 +203,7 @@ if uid and ("#1" in m or "#2" in m or "#5" in m or "done" in m):
         return
 
     if "#5" in m:
-        key = f"{uid}_newuser"
+        key = f"{uid_text}_newuser"
         if key in rewards:
             await update.message.reply_text(ALREADY_PENDING)
             return
@@ -211,44 +211,41 @@ if uid and ("#1" in m or "#2" in m or "#5" in m or "done" in m):
         save_rewards(rewards)
         await update.message.reply_text(NEWUSER_REWARD)
         return
-    # UID Support Start
-    if uid and update.effective_user.id not in WAITING_SUPPORT:
-        USER_UID[update.effective_user.id] = uid.group()
-        WAITING_SUPPORT[update.effective_user.id] = True
 
-        await update.message.reply_text(
-            "💙 Bhai, hume aapka UID mil gaya hai.\n\n"
-            "Kripya apni problem ka screenshot aur thoda sa problem bhi bata dijiye.\n\n"
-            "❤️ Tension mat lo bhai, hum aapki help ke liye hain."
+# ================= SUPPORT SYSTEM =================
+if uid and update.effective_user.id not in WAITING_SUPPORT:
+    USER_UID[update.effective_user.id] = uid.group()
+    WAITING_SUPPORT[update.effective_user.id] = True
+
+    await update.message.reply_text(
+        "💙 Bhai, hume aapka UID mil gaya hai.\n\n"
+        "Kripya apni problem ka screenshot aur thoda sa problem bhi bata dijiye."
+    )
+    return
+
+if update.effective_user.id in WAITING_SUPPORT:
+    USER_PROBLEM[update.effective_user.id] = update.message.text
+
+    ticket = create_ticket()
+
+    await update.message.reply_text(
+        f"💙 Bhai, humne aapki problem receive kar li hai.\n\n"
+        f"🎫 Ticket Number: #{ticket}\n\n"
+        "Bas patience rakho bhai, aap hamare bhai ho."
+    )
+
+    await context.bot.send_message(
+        chat_id=SUPPORT_GROUP_ID,
+        text=(
+            f"🎫 New Support Ticket #{ticket}\n\n"
+            f"👤 User: {update.effective_user.full_name}\n"
+            f"🆔 UID: {USER_UID.get(update.effective_user.id,'N/A')}\n"
+            f"📝 Problem:\n{USER_PROBLEM[update.effective_user.id]}"
         )
-        return
+    )
 
-    # Problem Receive
-    if update.effective_user.id in WAITING_SUPPORT:
-        USER_PROBLEM[update.effective_user.id] = update.message.text
-
-        ticket = create_ticket()
-
-        await update.message.reply_text(
-            f"💙 Bhai, humne aapki problem receive kar li hai.\n\n"
-            f"🎫 Ticket Number: #{ticket}\n\n"
-            "Hume pata hai problem hone par tension hoti hai.\n"
-            "Bas patience rakho bhai, aap hamare bhai ho.\n"
-            "Aapki problem solve karne ki poori koshish ki jayegi."
-        )
-
-        await context.bot.send_message(
-            chat_id=SUPPORT_GROUP_ID,
-            text=(
-                f"🎫 New Support Ticket #{ticket}\n\n"
-                f"👤 User: {update.effective_user.full_name}\n"
-                f"🆔 UID: {USER_UID.get(update.effective_user.id, 'N/A')}\n"
-                f"📝 Problem:\n{USER_PROBLEM[update.effective_user.id]}"
-            )
-        )
-
-        WAITING_SUPPORT.pop(update.effective_user.id, None)
-        return
+    WAITING_SUPPORT.pop(update.effective_user.id, None)
+    return
 
     if uid:
         rewards = load_rewards()
