@@ -20,8 +20,6 @@ WAITING_VIDEO = False
 USER_UID = {}
 WAITING_SUPPORT = {}
 USER_PROBLEM = {}
-WAITING_PROBLEM = {}
-WAITING_SCREENSHOT = {}
 SELL_VIDEO_ID="BAACAgUAAxkBAAPnalDB_HSeKrJsTS_Ymw47qEUOHKUAAtgdAAKSW4FWdedJ_-lG9D08BA"
 AUDIT_VIDEO_ID="BAACAgUAAxkBAAPralDCa0yXxb5lYferYVvWnuwNJMsAAt0dAAKSW4FWsAF9ASSoxLc8BA"
 FREEZE_VIDEO_ID="BAACAgUAAxkBAAPpalDCVY-zITe6MdYiwd1yUxKDQRgAAtwdAAKSW4FWEqvRTLMfAAGXPAQ"
@@ -226,15 +224,17 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     # ================= SUPPORT SYSTEM =================
-    if uid:
-    USER_UID[update.effective_user.id] = uid.group()
-    WAITING_SUPPORT[update.effective_user.id] = True
 
-    await update.message.reply_text(
-        "✅ UID receive ho gaya.\n\n"
-        "📝 Ab apni problem detail me batayiye."
-    )
-    return
+    if uid:
+        USER_UID[update.effective_user.id] = uid.group()
+        WAITING_SUPPORT[update.effective_user.id] = True
+
+        await update.message.reply_text(
+            "💙 Bhai, hume aapka UID mil gaya hai.\n\n"
+            "Kripya apni problem ka screenshot aur thoda sa problem bhi bata dijiye."
+        )
+        return
+
 
     if update.effective_user.id in WAITING_SUPPORT:
 
@@ -263,6 +263,7 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     if m == "sell":
+        ...
         await update.message.reply_text(SELL_MESSAGE)
         await update.message.reply_video(SELL_VIDEO_ID)
         return
@@ -388,3 +389,4 @@ app.add_handler(MessageHandler(filters.VIDEO, get_video_id), group=1)
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply), group=1)
 app.add_handler(CommandHandler("groupid", groupid))
 app.run_polling()
+        
