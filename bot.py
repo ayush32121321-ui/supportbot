@@ -191,7 +191,9 @@ async def support_screenshot(update, context):
 
     save_support(support_data)
 
-    await context.bot.send_photo(
+    ticket_message = await context.bot.send_photo(
+        support_data[str(user_id)]["support_message_id"] = ticket_message.message_id
+save_support(support_data)
         chat_id=SUPPORT_GROUP_ID,
         photo=update.message.photo[-1].file_id,
         caption=(
@@ -492,6 +494,42 @@ async def close_ticket(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
 
     await update.message.reply_text("❌ Ticket not found.")
+    async def support_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    if update.effective_chat.id != SUPPORT_GROUP_ID:
+        return
+
+    if not update.message.reply_to_message:
+        return
+
+    support_data = load_support()
+
+    for uid, data in support_data.items():
+
+        if data.get("support_message_id") == update.message.reply_to_message.message_id:
+
+            if update.message.text == "/close":
+
+                support_data[uid]["status"] = "CLOSED"
+                save_support(support_data)
+
+                await context.bot.send_message(
+                    int(uid),
+                    "✅ Ticket Closed\n\n"
+                    "Your issue has been solved.\n\n"
+                    "Thank you for contacting Support."
+                )
+
+                await update.message.reply_text("✅ Ticket Closed")
+                return
+
+            await context.bot.send_message(
+                int(uid),
+                f"📩 Support Reply\n\n{update.message.text}"
+            )
+
+            await update.message.reply_text("✅ Reply Sent")
+            return
 async def groupid(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(str(update.effective_chat.id))
 
@@ -518,5 +556,12 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply), gro
 app.add_handler(CommandHandler("groupid", groupid))
 app.add_handler(CommandHandler("reply", reply_ticket))
 app.add_handler(CommandHandler("close", close_ticket))
+app.add_handler(
+    MessageHandler(
+        filters.TEXT & filters.REPLY,
+        support_reply
+    ),
+    group=0
+)
 app.run_polling()
         
