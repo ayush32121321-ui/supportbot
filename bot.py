@@ -153,14 +153,12 @@ async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id == OWNER_ID:
         return True
 
-    try:
-        member = await context.bot.get_chat_member(
-            update.effective_chat.id,
-            update.effective_user.id
-        )
-        return member.status in ("administrator", "creator")
-    except:
-        return False
+    member = await context.bot.get_chat_member(
+        update.effective_chat.id,
+        update.effective_user.id
+    )
+
+    return member.status in ["administrator", "creator"]
 
 
 async def get_video_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -322,23 +320,6 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(OTP_MESSAGE)
         return
 
-    if any(x in m for x in support_keywords):
-        await update.message.reply_text(DEFAULT_REPLY)
-        ...
-        await update.message.reply_text(SELL_MESSAGE)
-        await update.message.reply_video(SELL_VIDEO_ID)
-        return
-    if any(x in m for x in ["sell fast","sell boost","sell problem"]):
-        await update.message.reply_text(SELL_MESSAGE); return
-    if m=="buy" or m=="audit" or "buy problem" in m:
-        await update.message.reply_text(AUDIT_MESSAGE)
-        await update.message.reply_video(AUDIT_VIDEO_ID); return
-    if "freeze" in m or "frozen" in m:
-        await update.message.reply_text(FREEZE_MESSAGE)
-        await update.message.reply_video(FREEZE_VIDEO_ID); return
-    otp=["otp","otp failed","otp faild","otp problem","sms"]
-    if any(x in m for x in otp):
-        await update.message.reply_text(OTP_MESSAGE); return
     if any(x in m for x in support_keywords):
         await update.message.reply_text(DEFAULT_REPLY)
 
@@ -522,4 +503,4 @@ app.add_handler(CommandHandler("reply", reply_ticket))
 app.add_handler(CommandHandler("close", close_ticket))
 app.run_polling()
 
-        
+                          
