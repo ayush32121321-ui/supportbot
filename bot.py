@@ -164,7 +164,9 @@ async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def get_video_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message and update.message.video:
         await update.message.reply_text(update.message.video.file_id)
-        async def support_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+
+async def support_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
     if SUPPORT_STAGE.get(user_id) != "screenshot":
@@ -196,6 +198,8 @@ async def get_video_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Our Support Team will contact you soon.\n\n"
         "Thank you for your patience."
     )
+
+
 async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
