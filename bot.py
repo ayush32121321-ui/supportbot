@@ -191,8 +191,8 @@ async def get_video_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"✅ Screenshot received successfully.\n\n"
         f"🎫 Ticket Number: #{ticket}\n\n"
-        f"Our Support Team will contact you soon.\n\n"
-        f"Thank you for your patience."
+        "Our Support Team will contact you soon.\n\n"
+        "Thank you for your patience."
     )
 async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
