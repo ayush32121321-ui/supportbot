@@ -229,15 +229,13 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if uid:
     USER_UID[update.effective_user.id] = uid.group()
-
-    WAITING_PROBLEM[update.effective_user.id] = True
+    WAITING_SUPPORT[update.effective_user.id] = True
 
     await update.message.reply_text(
         "✅ UID receive ho gaya.\n\n"
         "📝 Ab apni problem detail me batayiye."
     )
     return
-
 
     if update.effective_user.id in WAITING_SUPPORT:
 
@@ -266,7 +264,6 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     if m == "sell":
-        ...
         await update.message.reply_text(SELL_MESSAGE)
         await update.message.reply_video(SELL_VIDEO_ID)
         return
