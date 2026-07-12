@@ -179,6 +179,9 @@ async def support_screenshot(update, context):
             )
             return
 
+    if SUPPORT_STAGE.get(user_id) != "screenshot":
+        return
+
     ticket = create_ticket()
 
     support_data[str(user_id)] = {
@@ -188,7 +191,7 @@ async def support_screenshot(update, context):
 
     save_support(support_data)
 
-        await context.bot.send_photo(
+    await context.bot.send_photo(
         chat_id=SUPPORT_GROUP_ID,
         photo=update.message.photo[-1].file_id,
         caption=(
@@ -200,8 +203,10 @@ async def support_screenshot(update, context):
             f"📝 Problem:\n"
             f"{USER_PROBLEM.get(user_id, 'Not provided')}"
         )
-        )
-        SUPPORT_STAGE.pop(user_id, None)
+    )
+
+    SUPPORT_STAGE.pop(user_id, None)
+
     await update.message.reply_text(
         f"✅ Screenshot received successfully.\n\n"
         f"🎫 Ticket Number: #{ticket}\n\n"
