@@ -164,6 +164,36 @@ async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def get_video_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message and update.message.video:
         await update.message.reply_text(update.message.video.file_id)
+        async def support_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+
+    if SUPPORT_STAGE.get(user_id) != "screenshot":
+        return
+
+    ticket = create_ticket()
+
+    await context.bot.send_photo(
+        chat_id=SUPPORT_GROUP_ID,
+        photo=update.message.photo[-1].file_id,
+        caption=(
+            f"🎫 Ticket Number: #{ticket}\n\n"
+            f"👤 User Name: {update.effective_user.full_name}\n"
+            f"📱 Username: @{update.effective_user.username or 'None'}\n"
+            f"🆔 Telegram User ID: {user_id}\n"
+            f"🆔 UID: {USER_UID.get(user_id, 'N/A')}\n"
+            f"📝 Problem:\n"
+            f"{USER_PROBLEM.get(user_id, 'Not provided')}"
+        )
+    )
+
+    SUPPORT_STAGE.pop(user_id, None)
+
+    await update.message.reply_text(
+        f"✅ Screenshot received successfully.\n\n"
+        f"🎫 Ticket Number: #{ticket}\n\n"
+        f"Our Support Team will contact you soon.\n\n"
+        f"Thank you for your patience."
+    )
 async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
@@ -402,7 +432,13 @@ app.add_handler(CommandHandler("announcevideo", announcevideo))
 app.add_handler(MessageHandler(filters.ALL, track_group), group=0)
 
 app.add_handler(MessageHandler(filters.PHOTO | filters.VIDEO, announcement_media), group=1)
-
+app.add_handler(
+    MessageHandler(
+        filters.PHOTO,
+        support_screenshot
+    ),
+    group=2
+)
 app.add_handler(MessageHandler(filters.VIDEO, get_video_id), group=1)
 
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply), group=1)
