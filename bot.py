@@ -228,15 +228,15 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # ================= SUPPORT SYSTEM =================
 
     if uid:
-        USER_UID[update.effective_user.id] = uid.group()
+    USER_UID[update.effective_user.id] = uid.group()
 
-WAITING_PROBLEM[update.effective_user.id] = True
+    WAITING_PROBLEM[update.effective_user.id] = True
 
-await update.message.reply_text(
-    "✅ UID receive ho gaya.\n\n"
-    "📝 Ab apni problem detail me batayiye."
-)
-        return
+    await update.message.reply_text(
+        "✅ UID receive ho gaya.\n\n"
+        "📝 Ab apni problem detail me batayiye."
+    )
+    return
 
 
     if update.effective_user.id in WAITING_SUPPORT:
