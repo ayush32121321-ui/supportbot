@@ -314,31 +314,40 @@ async def announce(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def announcephoto(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    global WAITING_PHOTO
+    global WAITING_PHOTO, ANNOUNCE_CHAT_ID
 
     if update.effective_user.id != OWNER_ID:
         return
 
     WAITING_PHOTO = True
-    await update.message.reply_text("📸 Please send the photo with a caption.")
+    ANNOUNCE_CHAT_ID = update.effective_chat.id
 
+    await update.message.reply_text(
+        "📸 Please send the photo with a caption."
+    )
 
 async def announcevideo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    global WAITING_VIDEO
+    global WAITING_VIDEO, ANNOUNCE_CHAT_ID
 
     if update.effective_user.id != OWNER_ID:
         return
 
     WAITING_VIDEO = True
-    await update.message.reply_text("🎥 Please send the video with a caption.")
+    ANNOUNCE_CHAT_ID = update.effective_chat.id
+
+    await update.message.reply_text(
+        "🎥 Please send the video with a caption."
+    )
 
 
 async def announcement_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    global WAITING_PHOTO, WAITING_VIDEO
+    global WAITING_PHOTO, WAITING_VIDEO, ANNOUNCE_CHAT_ID
 
     if update.effective_user.id != OWNER_ID:
         return
 
+    if update.effective_chat.id != ANNOUNCE_CHAT_ID:
+        return
     if WAITING_PHOTO and update.message.photo:
         caption = update.message.caption or ""
         photo = update.message.photo[-1].file_id
