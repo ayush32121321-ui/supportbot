@@ -17,6 +17,7 @@ Please wait for verification.
 """
 WAITING_PHOTO = False
 WAITING_VIDEO = False
+ANNOUNCE_CHAT_ID = None
 USER_UID = {}
 WAITING_SUPPORT = {}
 USER_PROBLEM = {}
