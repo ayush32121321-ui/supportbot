@@ -20,6 +20,7 @@ WAITING_VIDEO = False
 USER_UID = {}
 WAITING_SUPPORT = {}
 USER_PROBLEM = {}
+SUPPORT_STAGE = {}
 SELL_VIDEO_ID="BAACAgUAAxkBAAPnalDB_HSeKrJsTS_Ymw47qEUOHKUAAtgdAAKSW4FWdedJ_-lG9D08BA"
 AUDIT_VIDEO_ID="BAACAgUAAxkBAAPralDCa0yXxb5lYferYVvWnuwNJMsAAt0dAAKSW4FWsAF9ASSoxLc8BA"
 FREEZE_VIDEO_ID="BAACAgUAAxkBAAPpalDCVY-zITe6MdYiwd1yUxKDQRgAAtwdAAKSW4FWEqvRTLMfAAGXPAQ"
@@ -226,15 +227,23 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # ================= SUPPORT SYSTEM =================
 
     if uid:
-        USER_UID[update.effective_user.id] = uid.group()
-        WAITING_SUPPORT[update.effective_user.id] = True
+    USER_UID[update.effective_user.id] = uid.group()
+    SUPPORT_STAGE[update.effective_user.id] = "problem"
 
-        await update.message.reply_text(
-            "💙 Bhai, hume aapka UID mil gaya hai.\n\n"
-            "Kripya apni problem ka screenshot aur thoda sa problem bhi bata dijiye."
-        )
-        return
+    await update.message.reply_text(
+        "✅ UID received successfully.\n\n"
+        "📝 Please describe your problem."
+    )
+    return
+if SUPPORT_STAGE.get(update.effective_user.id) == "problem":
+    USER_PROBLEM[update.effective_user.id] = update.message.text
+    SUPPORT_STAGE[update.effective_user.id] = "screenshot"
 
+    await update.message.reply_text(
+        "📸 Please send a screenshot of your problem.\n\n"
+        "Your support ticket will be generated after receiving the screenshot."
+    )
+    return
 
     if update.effective_user.id in WAITING_SUPPORT:
 
