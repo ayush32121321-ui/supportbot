@@ -226,7 +226,7 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # ================= SUPPORT SYSTEM =================
 
-    if uid:
+if uid:
     USER_UID[update.effective_user.id] = uid.group()
     SUPPORT_STAGE[update.effective_user.id] = "problem"
 
@@ -235,6 +235,7 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "📝 Please describe your problem."
     )
     return
+
 if SUPPORT_STAGE.get(update.effective_user.id) == "problem":
     USER_PROBLEM[update.effective_user.id] = update.message.text
     SUPPORT_STAGE[update.effective_user.id] = "screenshot"
