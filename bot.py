@@ -436,8 +436,62 @@ async def announcement_media(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 WAITING_VIDEO = False
         await update.message.reply_text(f"✅ Video sent to {count} groups.")
         return
+async def reply_ticket(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await is_admin(update, context):
+        return
 
+    if len(context.args) < 2:
+        await update.message.reply_text("Usage: /reply TicketNumber Message")
+        return
 
+    ticket_number = int(context.args[0])
+    reply_text = " ".join(context.args[1:])
+
+    support_data = load_support()
+
+    for uid, data in support_data.items():
+        if data.get("ticket") == ticket_number:
+            await context.bot.send_message(
+                int(uid),
+                f"📩 Support Reply\n\n{reply_text}"
+            )
+
+            await update.message.reply_text(
+                f"✅ Reply sent to Ticket #{ticket_number}"
+            )
+            return
+
+    await update.message.reply_text("❌ Ticket not found.")
+async def close_ticket(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await is_admin(update, context):
+        return
+
+    if len(context.args) != 1:
+        await update.message.reply_text("Usage: /close TicketNumber")
+        return
+
+    ticket_number = int(context.args[0])
+
+    support_data = load_support()
+
+    for uid, data in support_data.items():
+        if data.get("ticket") == ticket_number:
+            support_data[uid]["status"] = "CLOSED"
+            save_support(support_data)
+
+            await context.bot.send_message(
+                int(uid),
+                "✅ Ticket Closed\n\n"
+                "Your issue has been solved.\n\n"
+                "Thank you for contacting Support."
+            )
+
+            await update.message.reply_text(
+                f"✅ Ticket #{ticket_number} closed successfully."
+            )
+            return
+
+    await update.message.reply_text("❌ Ticket not found.")
 async def groupid(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(str(update.effective_chat.id))
 
@@ -462,5 +516,7 @@ app.add_handler(MessageHandler(filters.VIDEO, get_video_id), group=1)
 
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply), group=1)
 app.add_handler(CommandHandler("groupid", groupid))
+app.add_handler(CommandHandler("reply", reply_ticket))
+app.add_handler(CommandHandler("close", close_ticket))
 app.run_polling()
         
