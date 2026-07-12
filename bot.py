@@ -153,12 +153,14 @@ async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id == OWNER_ID:
         return True
 
-    member = await context.bot.get_chat_member(
-        update.effective_chat.id,
-        update.effective_user.id
-    )
-
-    return member.status in ["administrator", "creator"]
+    try:
+        member = await context.bot.get_chat_member(
+            update.effective_chat.id,
+            update.effective_user.id
+        )
+        return member.status in ("administrator", "creator")
+    except:
+        return False
 
 
 async def get_video_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
