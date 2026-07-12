@@ -175,15 +175,17 @@ async def get_video_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_photo(
         chat_id=SUPPORT_GROUP_ID,
         photo=update.message.photo[-1].file_id,
-        caption=(
-            f"🎫 Ticket Number: #{ticket}\n\n"
-            f"👤 User Name: {update.effective_user.full_name}\n"
-            f"📱 Username: @{update.effective_user.username or 'None'}\n"
-            f"🆔 Telegram User ID: {user_id}\n"
-            f"🆔 UID: {USER_UID.get(user_id, 'N/A')}\n"
-            f"📝 Problem:\n"
-            f"{USER_PROBLEM.get(user_id, 'Not provided')}"
-        )
+        caption=f"""
+🎫 Ticket Number: #{ticket}
+
+👤 User Name: {update.effective_user.full_name}
+📱 Username: @{update.effective_user.username or 'None'}
+🆔 Telegram User ID: {user_id}
+🆔 UID: {USER_UID.get(user_id, 'N/A')}
+
+📝 Problem:
+{USER_PROBLEM.get(user_id, 'Not provided')}
+"""
     )
 
     SUPPORT_STAGE.pop(user_id, None)
