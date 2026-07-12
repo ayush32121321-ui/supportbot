@@ -226,7 +226,6 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     # ================= SUPPORT SYSTEM =================
-
     if uid:
     USER_UID[update.effective_user.id] = uid.group()
     WAITING_SUPPORT[update.effective_user.id] = True
