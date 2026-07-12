@@ -224,55 +224,54 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
 
 
-    # ================= SUPPORT SYSTEM =================
+        # ================= SUPPORT SYSTEM =================
 
-if uid:
-    USER_UID[update.effective_user.id] = uid.group()
-    SUPPORT_STAGE[update.effective_user.id] = "problem"
-
-    await update.message.reply_text(
-        "✅ UID received successfully.\n\n"
-        "📝 Please describe your problem."
-    )
-    return
-
-if SUPPORT_STAGE.get(update.effective_user.id) == "problem":
-    USER_PROBLEM[update.effective_user.id] = update.message.text
-    SUPPORT_STAGE[update.effective_user.id] = "screenshot"
-
-    await update.message.reply_text(
-        "📸 Please send a screenshot of your problem.\n\n"
-        "Your support ticket will be generated after receiving the screenshot."
-    )
-    return
-
-    if update.effective_user.id in WAITING_SUPPORT:
-
-        USER_PROBLEM[update.effective_user.id] = update.message.text
-
-        ticket = create_ticket()
+    if uid:
+        USER_UID[update.effective_user.id] = uid.group()
+        SUPPORT_STAGE[update.effective_user.id] = "problem"
 
         await update.message.reply_text(
-            f"💙 Bhai, humne aapki problem receive kar li hai.\n\n"
-            f"🎫 Ticket Number: #{ticket}\n\n"
-            "Bas patience rakho bhai, aap hamare bhai ho."
+            "✅ UID received successfully.\n\n"
+            "📝 Please describe your problem."
         )
-
-        await context.bot.send_message(
-            chat_id=SUPPORT_GROUP_ID,
-            text=(
-                f"🎫 New Support Ticket #{ticket}\n\n"
-                f"👤 User: {update.effective_user.full_name}\n"
-                f"🆔 UID: {USER_UID.get(update.effective_user.id,'N/A')}\n"
-                f"📝 Problem:\n{USER_PROBLEM[update.effective_user.id]}"
-            )
-        )
-
-        WAITING_SUPPORT.pop(update.effective_user.id, None)
         return
 
+    if SUPPORT_STAGE.get(update.effective_user.id) == "problem":
+        USER_PROBLEM[update.effective_user.id] = update.message.text
+        SUPPORT_STAGE[update.effective_user.id] = "screenshot"
+
+        await update.message.reply_text(
+            "📸 Please send a screenshot of your problem.\n\n"
+            "Your support ticket will be generated after receiving the screenshot."
+        )
+        return
 
     if m == "sell":
+        await update.message.reply_text(SELL_MESSAGE)
+        await update.message.reply_video(SELL_VIDEO_ID)
+        return
+
+    if any(x in m for x in ["sell fast", "sell boost", "sell problem"]):
+        await update.message.reply_text(SELL_MESSAGE)
+        return
+
+    if m == "buy" or m == "audit" or "buy problem" in m:
+        await update.message.reply_text(AUDIT_MESSAGE)
+        await update.message.reply_video(AUDIT_VIDEO_ID)
+        return
+
+    if "freeze" in m or "frozen" in m:
+        await update.message.reply_text(FREEZE_MESSAGE)
+        await update.message.reply_video(FREEZE_VIDEO_ID)
+        return
+
+    otp = ["otp", "otp failed", "otp faild", "otp problem", "sms"]
+    if any(x in m for x in otp):
+        await update.message.reply_text(OTP_MESSAGE)
+        return
+
+    if any(x in m for x in support_keywords):
+        await update.message.reply_text(DEFAULT_REPLY)
         ...
         await update.message.reply_text(SELL_MESSAGE)
         await update.message.reply_video(SELL_VIDEO_ID)
