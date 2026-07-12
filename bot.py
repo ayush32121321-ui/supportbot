@@ -166,7 +166,7 @@ async def get_video_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(update.message.video.file_id)
 
 
-async def support_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def support_screenshot(update, context):
     user_id = update.effective_user.id
 
     support_data = load_support()
@@ -179,20 +179,20 @@ async def support_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE)
             )
             return
 
-    if SUPPORT_STAGE.get(user_id) != "screenshot":
-        return
-
     ticket = create_ticket()
-    support_data[str(user_id)] = {
-    "ticket": ticket,
-    "status": "OPEN"
-}
 
-save_support(support_data)
+    support_data[str(user_id)] = {
+        "ticket": ticket,
+        "status": "OPEN"
+    }
+
+    save_support(support_data)
+
     await context.bot.send_photo(
         chat_id=SUPPORT_GROUP_ID,
         photo=update.message.photo[-1].file_id,
-        caption=f"""
+        caption="..."
+    )
 🎫 Ticket Number: #{ticket}
 
 👤 User Name: {update.effective_user.full_name}
