@@ -269,7 +269,26 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="HTML"
         )
         return
+    if update.message.text.lower().startswith("tag "):
 
+        if not await is_admin(update, context):
+            return
+
+        users = load_group_users()
+
+        text = "📢 Attention Everyone\n\n"
+
+        for uid, data in users.items():
+            name = data.get("name", "User")
+            text += f'<a href="tg://user?id={uid}">{name}</a> '
+
+        text += "\n\n" + update.message.text[4:]
+
+        await update.message.reply_text(
+            text,
+            parse_mode="HTML"
+        )
+        return
     m = update.message.text.lower()
 
     import re
