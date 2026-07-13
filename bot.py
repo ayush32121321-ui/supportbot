@@ -99,6 +99,17 @@ def load_groups():
     if os.path.exists(GROUP_FILE):
         with open(GROUP_FILE,"r") as f: return json.load(f)
     return []
+    GROUP_USERS_FILE = "group_users.json"
+
+def load_group_users():
+    if os.path.exists(GROUP_USERS_FILE):
+        with open(GROUP_USERS_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_group_users(data):
+    with open(GROUP_USERS_FILE, "w") as f:
+        json.dump(data, f)
 def load_rewards():
     if os.path.exists(REWARD_FILE):
         with open(REWARD_FILE, "r") as f:
@@ -144,9 +155,23 @@ def save_group(gid):
         with open(GROUP_FILE, "w") as f:
             json.dump(g, f)
 async def track_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     if update.effective_chat and update.effective_chat.type in ("group", "supergroup"):
+
         save_group(update.effective_chat.id)
-        print("GROUP ID:", update.effective_chat.id)
+
+        users = load_group_users()
+
+        user_id = str(update.effective_user.id)
+
+        users[user_id] = {
+            "name": update.effective_user.first_name or "User",
+            "username": update.effective_user.username or ""
+        }
+
+        save_group_users(users)
+
+        print("GROUP USER SAVED:", user_id)
 
 
 async def is_admin(update, context):
@@ -519,7 +544,52 @@ async def close_ticket(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("❌ Ticket not found.")
 async def groupid(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(str(update.effective_chat.id))
+async def tag_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    if not await is_admin(update, context):
+        await update.message.reply_text("❌ Permission denied")
+        return
+
+    if not context.args:
+        await update.message.reply_text(
+            "Usage:\n/tag Your message"
+        )
+        return
+
+    message = " ".join(context.args)
+
+    users = load_group_users()
+
+    if not users:
+        await update.message.reply_text(
+            "❌ No users found."
+        )
+        return
+
+    tags = []
+
+    for uid, data in users.items():
+        name = data.get("name", "User")
+
+        tags.append(
+            f'<a href="tg://user?id={uid}">{name}</a>'
+        )
+
+    chunk_size = 5
+
+    for i in range(0, len(tags), chunk_size):
+
+        text = (
+            "📢 <b>Attention Everyone</b>\n\n"
+            + " ".join(tags[i:i+chunk_size])
+            + "\n\n"
+            + message
+        )
+
+        await update.message.reply_text(
+            text,
+            parse_mode="HTML"
+        )
 
 app = ApplicationBuilder().token(TOKEN).build()
 
@@ -550,6 +620,7 @@ app.add_handler(
     ),
     group=3
 )
+app.add_handler(CommandHandler("tag", tag_users))
 app.run_polling()
 
                           
