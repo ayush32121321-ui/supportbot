@@ -546,7 +546,7 @@ async def close_ticket(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def groupid(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(str(update.effective_chat.id))
 async def tag_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
+    print("TAG COMMAND RECEIVED")
     if not await is_admin(update, context):
         return
 
