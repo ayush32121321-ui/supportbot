@@ -247,7 +247,27 @@ async def support_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE)
 async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
+if update.message.text.startswith("/tag"):
+    if not await is_admin(update, context):
+        return
 
+    users = load_group_users()
+
+    if not users:
+        await update.message.reply_text("❌ No users saved")
+        return
+
+    text = "📢 Attention Everyone\n\n"
+
+    for uid, data in users.items():
+        name = data.get("name", "User")
+        text += f'<a href="tg://user?id={uid}">{name}</a> '
+
+    await update.message.reply_text(
+        text,
+        parse_mode="HTML"
+    )
+    return
     m = update.message.text.lower()
 
     import re
@@ -599,7 +619,6 @@ app.add_handler(
     ),
     group=3
 )
-app.add_handler(CommandHandler("tag", tag_users))
 app.run_polling()
 
                           
