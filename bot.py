@@ -323,7 +323,43 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if any(x in m for x in support_keywords):
         await update.message.reply_text(DEFAULT_REPLY)
+async def admin_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    if update.effective_chat.id != SUPPORT_GROUP_ID:
+        return
+
+    if not update.message.reply_to_message:
+        return
+
+    caption = update.message.reply_to_message.caption or ""
+
+    import re
+    m = re.search(r"Telegram User ID:\s*(\d+)", caption)
+
+    if not m:
+        return
+
+    user_id = int(m.group(1))
+
+    if update.message.text.lower() == "close":
+        support = load_support()
+        support.pop(str(user_id), None)
+        save_support(support)
+
+        await context.bot.send_message(
+            user_id,
+            "✅ Your issue has been closed.\n\nThank you."
+        )
+
+        await update.message.reply_text("✅ Ticket Closed")
+        return
+
+    await context.bot.send_message(
+        user_id,
+        f"📩 Support Reply\n\n{update.message.text}"
+    )
+
+    await update.message.reply_text("✅ Reply Sent")
 async def announce(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != OWNER_ID:
         await update.message.reply_text("Permission denied")
@@ -503,6 +539,13 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply), gro
 app.add_handler(CommandHandler("groupid", groupid))
 app.add_handler(CommandHandler("reply", reply_ticket))
 app.add_handler(CommandHandler("close", close_ticket))
+app.add_handler(
+    MessageHandler(
+        filters.TEXT & filters.REPLY,
+        admin_reply
+    ),
+    group=3
+)
 app.run_polling()
 
                           
