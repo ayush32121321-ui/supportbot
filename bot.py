@@ -420,6 +420,7 @@ async def announcement_media(update: Update, context: ContextTypes.DEFAULT_TYPE)
         await update.message.reply_text(f"✅ Video sent to {count} groups.")
         return
 async def reply_ticket(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Reply command received")
     if not await is_admin(update, context):
         return
 
