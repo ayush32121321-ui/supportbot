@@ -621,6 +621,7 @@ app.add_handler(
     ),
     group=3
 )
+app.add_handler(CommandHandler("tag", tag_users))
 app.run_polling()
 
                           
