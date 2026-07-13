@@ -5,6 +5,7 @@ from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, Con
 TOKEN="8878176103:AAEKkT1-Z2t7is1ZbGTvIlhrTBSpaPNCzn8"
 OWNER_ID=6488037485
 GROUP_FILE="groups.json"
+GROUP_USERS_FILE = "group_users.json"
 REWARD_FILE = "reward_history.json"
 SUPPORT_FILE = "support.json"
 TICKET_FILE = "ticket.json"
@@ -19,15 +20,6 @@ WAITING_PHOTO = False
 WAITING_VIDEO = False
 ANNOUNCE_CHAT_ID = None
 USER_UID = {}
-TAG_USERS = {}
-
-async def save_tag_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type in ("group", "supergroup"):
-        user = update.effective_user
-
-        TAG_USERS[user.id] = user.first_name or "User"
-
-        print("TAG USER SAVED:", user.id)
 WAITING_SUPPORT = {}
 USER_PROBLEM = {}
 SUPPORT_STAGE = {}
@@ -628,13 +620,6 @@ app.add_handler(
         admin_reply
     ),
     group=3
-)
-app.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        save_tag_user
-    ),
-    group=0
 )
 app.run_polling()
 
