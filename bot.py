@@ -166,7 +166,7 @@ async def get_video_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(update.message.video.file_id)
 
 
-async def support_screenshot(update, context):
+async def support_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
     support_data = load_support()
@@ -189,7 +189,7 @@ async def support_screenshot(update, context):
         "status": "OPEN"
     }
 
-        save_support(support_data)
+    save_support(support_data)
 
     msg = await context.bot.send_photo(
         chat_id=SUPPORT_GROUP_ID,
@@ -216,6 +216,8 @@ async def support_screenshot(update, context):
         "Our Support Team will contact you soon.\n\n"
         "Thank you for your patience."
     )
+
+
 async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
