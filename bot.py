@@ -189,23 +189,24 @@ async def support_screenshot(update, context):
         "status": "OPEN"
     }
 
-    save_support(support_data)
+        save_support(support_data)
 
     msg = await context.bot.send_photo(
-    chat_id=SUPPORT_GROUP_ID,
-    photo=update.message.photo[-1].file_id,
-    caption=(
-        f"🎫 Ticket Number: #{ticket}\n\n"
-        f"👤 User Name: {update.effective_user.full_name}\n"
-        f"📱 Username: @{update.effective_user.username or 'None'}\n"
-        f"🆔 Telegram User ID: {user_id}\n"
-        f"🆔 UID: {USER_UID.get(user_id, 'N/A')}\n\n"
-        f"📝 Problem:\n"
-        f"{USER_PROBLEM.get(user_id, 'Not provided')}"
+        chat_id=SUPPORT_GROUP_ID,
+        photo=update.message.photo[-1].file_id,
+        caption=(
+            f"🎫 Ticket Number: #{ticket}\n\n"
+            f"👤 User Name: {update.effective_user.full_name}\n"
+            f"📱 Username: @{update.effective_user.username or 'None'}\n"
+            f"🆔 Telegram User ID: {user_id}\n"
+            f"🆔 UID: {USER_UID.get(user_id, 'N/A')}\n\n"
+            f"📝 Problem:\n"
+            f"{USER_PROBLEM.get(user_id, 'Not provided')}"
+        )
     )
-)
-support_data[str(user_id)]["group_message_id"] = msg.message_id
-save_support(support_data)
+
+    support_data[str(user_id)]["group_message_id"] = msg.message_id
+    save_support(support_data)
 
     SUPPORT_STAGE.pop(user_id, None)
 
