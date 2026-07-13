@@ -149,8 +149,8 @@ async def track_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print("GROUP ID:", update.effective_chat.id)
 
 
-async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id == OWNER_ID:
+async def is_admin(update, context):
+    return update.effective_user.id == OWNER_ID
         return True
 
     member = await context.bot.get_chat_member(
