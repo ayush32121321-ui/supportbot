@@ -206,14 +206,15 @@ async def support_screenshot(update, context):
 )
 support_data[str(user_id)]["group_message_id"] = msg.message_id
 save_support(support_data)
-    SUPPORT_STAGE.pop(user_id, None)
 
-    await update.message.reply_text(
-        f"✅ Screenshot received successfully.\n\n"
-        f"🎫 Ticket Number: #{ticket}\n\n"
-        "Our Support Team will contact you soon.\n\n"
-        "Thank you for your patience."
-    )
+SUPPORT_STAGE.pop(user_id, None)
+
+await update.message.reply_text(
+    f"✅ Screenshot received successfully.\n\n"
+    f"🎫 Ticket Number: #{ticket}\n\n"
+    "Our Support Team will contact you soon.\n\n"
+    "Thank you for your patience."
+)
 async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
